@@ -1,7 +1,8 @@
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { promisify } from "node:util";
+import { PNG } from "pngjs";
 
 const IMAGE_PATHS = "/tmp/scanqr/";
 const run = promisify(execFile);
@@ -23,5 +24,15 @@ export async function capture(method: CaptureMethod) {
   if (!existsSync(filename)) {
     throw new Error("Image not captured");
   }
-  return filename;
+  return PNG.sync.read(readFileSync(filename));;
+}
+
+export async function fetchImage(path: string) {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error("An error occured");
+  if(res.headers.get("content-type") !== "image/png"){
+    throw new Error("URL must return a PNG image")
+  }
+  const image = Buffer.from(await res.arrayBuffer());
+  return PNG.sync.read(image);
 }
