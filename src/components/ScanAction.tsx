@@ -10,12 +10,12 @@ export function ScanAction(props: { title: string, method: CaptureMethod }) {
             onAction={async () => {
                 await closeMainWindow({ clearRootSearch: true });
                 const file = await capture(props.method)
-                const url = scanQr(file)
+                const url = await scanQr(file)
                 if (!url) {
                     await showToast({ title: "no data found" })
                     return
                 }
-                await Clipboard.paste(url?.getText())
+                await Clipboard.copy(url?.getText())
                 await showHUD("QR code copied to clipboard");
             }}
         />
