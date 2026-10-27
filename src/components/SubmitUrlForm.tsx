@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Clipboard, Form, showToast, useNavigation } from "@raycast/api";
+import { Action, ActionPanel, Form, showToast, Toast, useNavigation } from "@raycast/api";
 import { fetchImage } from "../lib/capture";
 import { scanQr } from "../lib/scan";
 import { useState } from "react";
@@ -28,10 +28,8 @@ export default function SubmitUrlForm() {
                                     return
                                 }
                                 setLoading(false)
-                                await Clipboard.copy(data.getText())
-                                console.log(data.getText())
                                 push(<ScanResult image={values.url} url={data.getText()} />)
-                                // await showHUD("QR code copied to clipboard");
+                                await showToast({ style: Toast.Style.Success, title: "Scanned" });
                             } catch (e) {
                                 console.log(e)
                                 if (e instanceof Error) {
